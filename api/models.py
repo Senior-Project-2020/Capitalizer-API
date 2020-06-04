@@ -1,14 +1,27 @@
 from django.db import models
 
 INTERESTS = [
-    ('int1','int1'), 
-    ('int2','int2'), 
-    ('int3','int3')
+    ('tech', 'Tech'), 
+    ('real_estate','Real Estate'), 
+    ('healthcare','Healthcare'),
 ]
+
+class Interest(models.Model):
+    interest = models.CharField(choices=INTERESTS, max_length=100)
+
+    def __str__(self):
+        return self.interest
+
+    class Meta:
+        ordering = ['interest']
 
 class UserInfo(models.Model):
     email = models.EmailField()
-    interests = models.CharField(choices=INTERESTS, max_length=100)
+    # Get interests from the Interest table
+    interests = models.ManyToManyField(Interest)
+
+    def __str__(self):
+        return self.email
 
     class Meta:
         ordering = ['email']

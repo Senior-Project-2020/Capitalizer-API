@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 INTERESTS = [
     ('tech', 'Tech'), 
@@ -15,15 +16,6 @@ class Interest(models.Model):
     class Meta:
         ordering = ['interest']
 
-class UserInfo(models.Model):
-    email = models.EmailField()
+class PCUser(AbstractUser):
     # Get interests from the Interest table
     interests = models.ManyToManyField(Interest)
-
-    def __str__(self):
-        return self.email
-
-    class Meta:
-        ordering = ['email']
-        verbose_name = 'User Info'
-        verbose_name_plural = 'User Info'

@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from rest_framework import generics
 
-# Create your views here.
+from .models import Interest
+from .serializers import InterestSerializer
+
+class InterestList(generics.ListAPIView):
+    queryset = Interest.objects.all()
+    serializer_class = InterestSerializer

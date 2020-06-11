@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 
 from .models import Interest, StockPrice, Stock
 from .serializers import InterestSerializer, StockPriceSerializer, StockSerializer
@@ -6,6 +6,7 @@ from .serializers import InterestSerializer, StockPriceSerializer, StockSerializ
 class InterestList(generics.ListAPIView):
     queryset = Interest.objects.all()
     serializer_class = InterestSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 # Create and list all stock prices
 class StockPriceList(generics.ListCreateAPIView):

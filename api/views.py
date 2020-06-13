@@ -1,7 +1,9 @@
 from rest_framework import generics, permissions
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
 
-from .models import Interest, StockPrice, Stock
-from .serializers import InterestSerializer, StockPriceSerializer, StockSerializer
+from .models import Interest, StockPrice, Stock, PCUser
+from .serializers import InterestSerializer, StockPriceSerializer, StockSerializer, SuggestionSerializer
 
 class InterestList(generics.ListAPIView):
     queryset = Interest.objects.all()
@@ -31,3 +33,13 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
     permission_classes = [permissions.IsAuthenticated, permissions.DjangoModelPermissions]
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def suggestion_list(request):
+    """
+    List all suggestions for the authenticated user.
+    """
+    user = PCUser.objects.get(username=request.user)
+    serializer = SuggestionSerializer(user)
+    return Response(serializer.data)

@@ -1,10 +1,12 @@
+from datetime import date
+
 from django.test import TestCase
 from django.contrib.auth.models import Permission
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
-from .views import StockPriceList
 from .models import PCUser, Interest, Stock, StockPrice
+from .utils import stock_suggestions
 
 class UserTestCase(TestCase):
     """
@@ -444,3 +446,94 @@ class StockTestCase(TestCase):
 
         # Assert
         self.assertEquals(response.status_code, 403)
+
+class SuggestionViewTestCase(TestCase):
+    """
+    Tests the suggestion view, does not test the suggestion algorithm
+    """
+    def setUp(self):
+        user = PCUser.objects.create_user('regular', password='1234')
+
+        self.userToken = APIClient().post('/api/v1/rest-auth/login/', {'username': 'regular', 'password': '1234'}).data['key']
+
+        stock1 = Stock.objects.create(name='test1', symbol='tst1', category='testCat')
+        StockPrice.objects.create(stock=stock1, date=date.today(), opening_price='5.00', predicted_closing_price="10.00")
+        StockPrice.objects.create(stock=stock1, date=date.today(), opening_price='5.00', predicted_closing_price="0.00")
+
+    def test_must_be_authenticated(self):
+        # Arrange
+        client = APIClient()
+
+        # Act 
+        response = client.get('/api/v1/suggestion/')
+
+        # Assert
+        self.assertEquals(response.status_code, 401)
+
+    def test_can_get_suggestions(self):
+        # Arrange
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + self.userToken)
+
+        # Act 
+        response = client.get('/api/v1/suggestion/')
+
+        # Assert
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(len(dict(response.data)['suggestions']), 2)   # Test that it returned two predictions
+
+class SuggestionAlgorithmTestCase(TestCase):
+    """
+    Tests the suggestion algorithm
+    """
+    def test_beyond_thresholds(self):
+        # Arrange
+        stock1 = Stock.objects.create(name='test1', symbol='tst1', category='testCat')
+        StockPrice.objects.create(stock=stock1, date=date.today(), opening_price='1.00', predicted_closing_price="2.00")    #  1.0 change
+        StockPrice.objects.create(stock=stock1, date=date.today(), opening_price='1.00', predicted_closing_price="0.00")    # -1.0 change
+        prices = StockPrice.objects.filter(stock=stock1)
+
+        expected = [{'stock': 1, 'action': 'buy', 'percent_change': 1.0}, {'stock': 1, 'action': 'sell', 'percent_change': -1.0}, ]
+
+        # Act
+        result = stock_suggestions(prices, -0.1, 0.1)
+
+        # Assert
+        self.assertEqual(result, expected)
+        
+    def test_at_thresholds(self):
+        # Arrange
+        stock1 = Stock.objects.create(name='test1', symbol='tst1', category='testCat')
+        StockPrice.objects.create(stock=stock1, date='2020-01-01', opening_price='1.00', predicted_closing_price="1.10")    #  0.1 change
+        StockPrice.objects.create(stock=stock1, date='2020-01-01', opening_price='1.00', predicted_closing_price="0.90")    # -0.1 change
+        prices = StockPrice.objects.filter(stock=stock1)
+
+        expectedStocks = [1, 1]
+        expectedActions = ['hold', 'hold']
+        expectedChange = [0.1, -0.1]
+
+        # Act
+        result = stock_suggestions(prices, -0.1, 0.1)
+        stocks = [suggest['stock'] for suggest in result]
+        actions = [suggest['action'] for suggest in result]
+        change = [suggest['percent_change'] for suggest in result]
+
+        # Assert
+        self.assertEquals(stocks, expectedStocks)
+        self.assertEquals(actions, expectedActions)
+        self.assertAlmostEquals(float(change[0]), expectedChange[0])
+        self.assertAlmostEquals(float(change[1]), expectedChange[1])
+
+    def test_within_thresholds(self):
+        # Arrange
+        stock1 = Stock.objects.create(name='test1', symbol='tst1', category='testCat')
+        StockPrice.objects.create(stock=stock1, date='2020-01-01', opening_price='1.00', predicted_closing_price="1.00")    #  0.0 change
+        prices = StockPrice.objects.filter(stock=stock1)
+
+        expected = [{'stock': 1, 'action': 'hold', 'percent_change': 0.0},]
+
+        # Act
+        result = stock_suggestions(prices, -0.1, 0.1)
+
+        # Assert
+        self.assertEquals(result, expected)

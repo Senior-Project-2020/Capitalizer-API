@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from .models import Interest, StockPrice, Stock, PCUser
 from .serializers import InterestSerializer, StockPriceSerializer, StockSerializer, SuggestionSerializer
@@ -43,3 +44,17 @@ def suggestion_list(request):
     user = PCUser.objects.get(username=request.user)
     serializer = SuggestionSerializer(user)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    """
+    List relevant endpoints
+    """
+    return Response({
+        'login': request.build_absolute_uri(request.get_full_path() + 'rest-auth/login/'),
+        'registration': request.build_absolute_uri(request.get_full_path() + 'rest-auth/registration/'),
+        'interests': reverse('interest-list', request=request, format=format),
+        'stock-prices': reverse('stock-price-list', request=request, format=format),
+        'stocks': reverse('stock-list', request=request, format=format),
+        'suggestions': reverse('suggestion-list', request=request, format=format),
+        })

@@ -13,10 +13,10 @@ def stock_suggestions(prices, sellThreshold = -0.1, buyThreshold = 0.1):
     """
     suggestions = []
     for price in prices:
-        stockId = price.stock.id
+        stockSymbol = price.stock.symbol
 
         if price.predicted_closing_price == None:
-            suggestions.append({'stock': stockId, 'action': 'unknown', 'percent_change': None})
+            suggestions.append({'stock': stockSymbol, 'action': 'unknown', 'percent_change': None})
             continue
 
         opening = price.opening_price
@@ -30,5 +30,5 @@ def stock_suggestions(prices, sellThreshold = -0.1, buyThreshold = 0.1):
         else:
             action = 'hold'
 
-        suggestions.append({'stock': stockId, 'action': action, 'percent_change': percentchange})
+        suggestions.append({'stock': stockSymbol, 'action': action, 'percent_change': percentchange})
     return suggestions

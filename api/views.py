@@ -1,10 +1,12 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
+from .forms import SuggestionDateForm
 from .models import Interest, StockPrice, Stock, PCUser
-from .serializers import InterestSerializer, StockPriceSerializer, StockSerializer, SuggestionSerializer
+from .serializers import InterestSerializer, StockPriceSerializer, StockSerializer
+from .utils import stock_suggestions
 
 class InterestList(generics.ListAPIView):
     queryset = Interest.objects.all()
@@ -41,9 +43,11 @@ def suggestion_list(request):
     """
     List all suggestions for the authenticated user.
     """
-    user = PCUser.objects.get(username=request.user)
-    serializer = SuggestionSerializer(user)
-    return Response(serializer.data)
+    form = SuggestionDateForm(request.GET)
+    if form.is_valid():
+        stockPrices = StockPrice.objects.filter(date=form.cleaned_data['date'])
+        return Response({'suggestions': stock_suggestions(stockPrices)})
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def api_root(request, format=None):

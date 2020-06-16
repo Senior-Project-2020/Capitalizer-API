@@ -457,15 +457,15 @@ class SuggestionViewTestCase(TestCase):
         self.userToken = APIClient().post('/api/v1/rest-auth/login/', {'username': 'regular', 'password': '1234'}).data['key']
 
         stock1 = Stock.objects.create(name='test1', symbol='tst1', category='testCat')
-        StockPrice.objects.create(stock=stock1, date=date.today(), opening_price='5.00', predicted_closing_price="10.00")
-        StockPrice.objects.create(stock=stock1, date=date.today(), opening_price='5.00', predicted_closing_price="0.00")
+        StockPrice.objects.create(stock=stock1, date='2020-01-01', opening_price='5.00', predicted_closing_price="10.00")
+        StockPrice.objects.create(stock=stock1, date='2020-01-01', opening_price='5.00', predicted_closing_price="0.00")
 
     def test_must_be_authenticated(self):
         # Arrange
         client = APIClient()
 
         # Act 
-        response = client.get('/api/v1/suggestion/')
+        response = client.get('/api/v1/suggestion/?date=2020-01-01')
 
         # Assert
         self.assertEquals(response.status_code, 401)
@@ -476,7 +476,7 @@ class SuggestionViewTestCase(TestCase):
         client.credentials(HTTP_AUTHORIZATION='Token ' + self.userToken)
 
         # Act 
-        response = client.get('/api/v1/suggestion/')
+        response = client.get('/api/v1/suggestion/?date=2020-01-01')
 
         # Assert
         self.assertEquals(response.status_code, 200)

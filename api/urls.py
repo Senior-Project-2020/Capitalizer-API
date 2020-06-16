@@ -18,7 +18,7 @@ urlpatterns = [
     path('stock/', 
          views.StockList.as_view(), 
          name='stock-list'), 
-    path('stock/<int:pk>', 
+    path('stock/<str:pk>', 
          views.StockDetail.as_view(), 
          name='stock-detail'),
     path('suggestion/', 

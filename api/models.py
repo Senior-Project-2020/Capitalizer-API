@@ -12,8 +12,11 @@ class Interest(models.Model):
 
 class Stock(models.Model):
     name = models.CharField(max_length=100)
-    symbol = models.CharField(max_length=100)
+    symbol = models.CharField(max_length=100, primary_key=True)
     category = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.symbol
 
     class Meta:
         ordering = ['name']

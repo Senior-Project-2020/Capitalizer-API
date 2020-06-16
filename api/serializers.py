@@ -22,7 +22,7 @@ class StockSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stock
-        fields = ['id', 'name', 'symbol', 'category', 'stock_prices']
+        fields = ['name', 'symbol', 'category', 'stock_prices']
 
 class PCUserDetailSerializer(serializers.ModelSerializer):
     interests = serializers.PrimaryKeyRelatedField(many=True, queryset=Interest.objects.all())

@@ -81,7 +81,7 @@ class StockPriceTestCase(TestCase):
         StockPrice.objects.create(stock=stock1, date='2020-01-02', predicted_closing_price='5.05')
 
     def test_create_stock_price(self):
-        expectedData = {'id': 3, 'stock': 'tst1', 'date': '2020-01-01', 'opening_price': None, 'predicted_closing_price': '5.00'}
+        expectedData = {'id': 3, 'stock': 'tst1', 'date': '2020-01-01', 'predicted_closing_price': '5.00', 'opening_price': None, 'actual_closing_price': None, 'daily_high': None, 'daily_low': None, 'volume': None }
         
         # Arrange (special user)
         client = APIClient()
@@ -107,8 +107,8 @@ class StockPriceTestCase(TestCase):
 
     def test_get_all_stock_prices(self):
         expectedData = [
-            {'id': 1, 'stock': 'tst1', 'date': '2020-01-01', 'opening_price': None, 'predicted_closing_price': '5.00'},
-            {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'opening_price': None, 'predicted_closing_price': '5.05'},
+            {'id': 1, 'stock': 'tst1', 'date': '2020-01-01', 'predicted_closing_price': '5.00', 'opening_price': None, 'actual_closing_price': None, 'daily_high': None, 'daily_low': None, 'volume': None },
+            {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'predicted_closing_price': '5.05', 'opening_price': None, 'actual_closing_price': None, 'daily_high': None, 'daily_low': None, 'volume': None },
             ]
 
         # Arrange (special user)
@@ -135,7 +135,7 @@ class StockPriceTestCase(TestCase):
         self.assertEquals(response.data, expectedData)
     
     def test_get_a_stock_price(self):
-        expectedData = {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'opening_price': None, 'predicted_closing_price': '5.05'}
+        expectedData = {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'predicted_closing_price': '5.05', 'opening_price': None, 'actual_closing_price': None, 'daily_high': None, 'daily_low': None, 'volume': None }
 
         # Arrange (special user)
         client = APIClient()
@@ -172,7 +172,7 @@ class StockPriceTestCase(TestCase):
         self.assertEquals(response.status_code, 404)
     
     def test_can_patch_stock_price(self):
-        expectedData = {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'opening_price': None, 'predicted_closing_price': '5.06'}
+        expectedData = {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'predicted_closing_price': '5.06', 'opening_price': None, 'actual_closing_price': None, 'daily_high': None, 'daily_low': None, 'volume': None }
 
         # Arrange (special user)
         client = APIClient()
@@ -209,12 +209,12 @@ class StockPriceTestCase(TestCase):
         self.assertEquals(response.status_code, 404)
         
     def test_can_put_stock_price(self):
-        expectedData = {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'opening_price': None, 'predicted_closing_price': '5.07'}
+        expectedData = {'id': 2, 'stock': 'tst1', 'date': '2020-01-02', 'predicted_closing_price': '5.07', 'opening_price': None, 'actual_closing_price': None, 'daily_high': None, 'daily_low': None, 'volume': None }
    
         # Arrange (special user)
         client = APIClient
         client.credentials(HTTP_AUTHORIZATION='Token ' + self.sUserToken)
-        updatedObject = {'stock': 'tst1', 'date': '2020-01-02', 'opening_price': '', 'predicted_closing_price': '5.07'}
+        updatedObject = {'stock': 'tst1', 'date': '2020-01-02', 'predicted_closing_price': '5.07', 'opening_price': '', 'actual_closing_price': '', 'daily_high': '', 'daily_low': '', 'volume': '' }
     
         # Act
         response = client.put('/api/v1/stock-price/2', updatedObject)
@@ -227,7 +227,7 @@ class StockPriceTestCase(TestCase):
         # Arrange (regular user)
         client = APIClient
         client.credentials(HTTP_AUTHORIZATION='Token ' + self.rUserToken)
-        updatedObject = {'stock': 'tst1', 'date': '2020-01-02', 'opening_price': '', 'predicted_closing_price': '5.07'}
+        updatedObject = {'stock': 'tst1', 'date': '2020-01-02', 'predicted_closing_price': '5.07', 'opening_price': '', 'actual_closing_price': '', 'daily_high': '', 'daily_low': '', 'volume': '' }
     
         # Act
         response = client.put('/api/v1/stock-price/2', updatedObject)
@@ -239,7 +239,7 @@ class StockPriceTestCase(TestCase):
         # Arrange
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + self.sUserToken)
-        updatedObject = {'stock': 'tst1', 'date': '2020-01-02', 'opening_price': '', 'predicted_closing_price': '5.07'}
+        updatedObject = {'stock': 'tst1', 'date': '2020-01-02', 'predicted_closing_price': '5.07', 'opening_price': '', 'actual_closing_price': '', 'daily_high': '', 'daily_low': '', 'volume': '' }
     
         # Act
         response = client.put('/api/v1/stock-price/3', updatedObject)

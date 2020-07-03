@@ -5,6 +5,7 @@ services:
         build: ./nginx
         volumes:
           - static_volume:/home/app/web/static
+          - ../certs:/etc/nginx/certs
         ports:
           - 80:80
           - 433:433

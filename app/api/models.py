@@ -24,8 +24,12 @@ class Stock(models.Model):
 class StockPrice(models.Model):
     stock = models.ForeignKey(Stock, related_name='stock_prices', on_delete=models.CASCADE)
     date = models.DateField()
-    opening_price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     predicted_closing_price = models.DecimalField(max_digits=12, decimal_places=2)
+    opening_price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    actual_closing_price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    daily_high = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    daily_low = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    volume = models.IntegerField(blank=True, null=True)
 
 class PCUser(AbstractUser):
     # Get interests from the Interest table

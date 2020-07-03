@@ -12,7 +12,7 @@ class StockPriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StockPrice
-        fields = ['id', 'stock', 'date', 'opening_price', 'predicted_closing_price']
+        fields = ['id', 'stock', 'date', 'predicted_closing_price', 'opening_price', 'actual_closing_price', 'daily_high', 'daily_low', 'volume']
 
 class StockSerializer(serializers.ModelSerializer):
     stock_prices = serializers.PrimaryKeyRelatedField(many=True, queryset=StockPrice.objects.all())

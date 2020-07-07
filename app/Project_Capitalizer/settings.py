@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'corsheaders',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -61,6 +62,10 @@ REST_FRAMEWORK = {
     ]
 }
 
+# django-cors-headers configuration
+# https://github.com/adamchainz/django-cors-headers#configuration
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Middleware framework
 # https://docs.djangoproject.com/en/2.1/topics/http/middleware/
 MIDDLEWARE = [
@@ -71,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'Project_Capitalizer.urls'

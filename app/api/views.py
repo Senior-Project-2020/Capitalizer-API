@@ -30,7 +30,7 @@ class StockPriceList(generics.ListCreateAPIView):
 
                 # Get a list of the five most recent dates for stock prices
                 recent_dates = []
-                for i in range(5):
+                for i in range(min(len(all_dates), 5)):
                     recent_dates.append(all_dates[i]['date'])
 
                 # Gets the stock prices for all stocks on the five most recent price dates.

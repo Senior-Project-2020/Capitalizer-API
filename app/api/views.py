@@ -19,6 +19,31 @@ class StockPriceList(generics.ListCreateAPIView):
     serializer_class = StockPriceSerializer
     permission_classes = [permissions.IsAuthenticated, permissions.DjangoModelPermissions]
 
+    def get_queryset(self):
+        queryset = StockPrice.objects.all()
+        stock = self.request.query_params.get('recent', None)
+
+        if stock is not None:
+            if stock == 'all':
+                # Gets a list of dates for all stock prices
+                all_dates = list(StockPrice.objects.values('date').distinct().order_by('-date'))
+
+                # Get a list of the five most recent dates for stock prices
+                recent_dates = []
+                for i in range(5):
+                    recent_dates.append(all_dates[i]['date'])
+
+                # Gets the stock prices for all stocks on the five most recent price dates.
+                # Orders them by stock, ascending, and then date, descending. Prices from the same stock are "grouped" together.
+                queryset = StockPrice.objects.filter(date__in=recent_dates).order_by('stock', '-date')
+
+            else:
+                # Order by date, newest to oldest
+                queryset = StockPrice.objects.order_by('-date')
+                queryset = queryset.filter(stock=stock)[:5]
+
+        return queryset
+
 # View individual stock prices; Update reserved for users with special permissions set
 class StockPriceDetail(generics.RetrieveUpdateAPIView):
     queryset = StockPrice.objects.all()

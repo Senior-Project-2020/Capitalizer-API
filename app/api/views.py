@@ -35,7 +35,7 @@ class StockPriceList(generics.ListCreateAPIView):
 
                 # Gets the stock prices for all stocks on the five most recent price dates.
                 # Orders them by stock, ascending, and then date, descending. Prices from the same stock are "grouped" together.
-                queryset = StockPrice.objects.filter(date__in=recent_dates).order_by('stock__symbol', '-date')
+                queryset = StockPrice.objects.filter(date__in=recent_dates).order_by('stock__category', 'stock__symbol', '-date')
 
             else:
                 # Order by date, newest to oldest

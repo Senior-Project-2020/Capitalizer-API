@@ -70,8 +70,23 @@ def suggestion_list(request):
     """
     form = SuggestionDateForm(request.GET)
     if form.is_valid():
-        stockPrices = StockPrice.objects.filter(date=form.cleaned_data['date'])
-        return Response({'suggestions': stock_suggestions(stockPrices)})
+        stock_prices_today = StockPrice.objects.filter(date=form.cleaned_data['date']).order_by('stock__symbol')
+        stock_prices_before = []
+
+        # Iterate over all dates with price data (sorted in descending order)
+        all_dates = list(StockPrice.objects.values('date').distinct().order_by('-date'))
+        for i in range(len(all_dates)):
+
+            # Make sure that there is another date in the list, then check if the current date in all_dates matches the form data
+            if i < len(all_dates) - 1 and (all_dates[i]['date'] == form.cleaned_data['date']):
+
+                # Get the stock prices from the previous day
+                stock_prices_before = StockPrice.objects.filter(date=all_dates[i+1]['date']).order_by('stock__symbol')
+
+        # If there were prices found for a previous day, calculate and return the suggestions
+        if stock_prices_before != []:
+            return Response({'suggestions': stock_suggestions(stock_prices_today, stock_prices_before)})
+        
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])

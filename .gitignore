@@ -479,3 +479,7 @@ dmypy.json
 .pyre/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
+
+# Production environment files
+.env.prod
+.env.prod.db

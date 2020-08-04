@@ -32,9 +32,21 @@
   <ItemGroup>
     <Compile Include="api\admin.py" />
     <Compile Include="api\apps.py" />
+    <Compile Include="api\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="api\migrations\__init__.py" />
     <Compile Include="api\models.py" />
+    <Compile Include="api\serializers.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="api\tests.py" />
+    <Compile Include="api\urls.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="api\utils.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="api\views.py" />
     <Compile Include="api\__init__.py" />
     <Compile Include="manage.py" />
@@ -44,14 +56,11 @@
     <Compile Include="Project_Capitalizer\wsgi.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="api\templates\api\index.html" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="api\" />
     <Folder Include="api\migrations\" />
-    <Folder Include="api\templates\" />
-    <Folder Include="api\templates\api\" />
     <Folder Include="Project_Capitalizer\" />
   </ItemGroup>
   <ItemGroup>

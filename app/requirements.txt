@@ -19,7 +19,7 @@ packaging==20.4
 pip==20.1.1
 pluggy==0.13.1
 psycopg2-binary==2.8.5
-py==1.8.1
+py==1.10.0
 pyparsing==2.4.7
 python3-openid==3.1.0
 pytz==2020.1
